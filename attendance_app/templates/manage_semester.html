@@ -1,0 +1,127 @@
+{% extends "includes/base.html" %}<title>{% block title %}Student Attendance System :: Manage Semester{% endblock %}</title>
+{% block content %}
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>Manage Semester
+                <small>{# Optional description #}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li><a href="/">Manage Semester</a></li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="box box-primary">
+
+                        <!-- form start -->
+                        <form class="form-vertical" method="post" role="form">
+                            {% csrf_token %}
+
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Manage Semester</h3>
+
+                                <!-- <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                                    </button>
+                                </div> -->
+                            </div>
+                            <!-- /.box-header -->
+
+                            <div class="box-body">
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="StreamId">Stream Name</label>
+                                        <select class="form-control select2" name="cmbStreamId" id="cmbStreamId" style="width: 100%;" {% if readonly == 1 %} disabled {% endif %}>
+                                        <option value="">Select Stream</option>
+                                        {% for stream in all_stream %}
+                                            <option value="{{ stream.pk }}" {% if semester.stream.pk == stream.pk %} selected="selected" {% endif %}>{{ stream.name }}</option>
+                                        {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="SemesterName">Semester Name</label>
+                                        <input type="text" class="form-control" name="txtSemesterName" id="txtSemesterName" placeholder="Semester Name" value="{{ semester.name }}" required {% if readonly == 1 %} readonly {% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <button type="submit" class="btn btn-primary" {% if readonly == 1 %} disabled {% endif %}>Submit</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /.box-body -->
+
+                            <div class="box-footer">
+                                <h4 class="box-title">View Semester</h4><br>
+                                <table id="dtTableSemester" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Semester Id</th>
+                                        <th>Stream Name</th>
+                                        <th>Semester Name</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for semester in all_semester %}
+                                        <tr>
+                                            <td>{{ semester.pk }}</td>
+                                            <td>{{ semester.stream.name }}</td>
+                                            <td>{{ semester.name }}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-xs btn-info dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="fa fa-bars"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="{% url 'semester_action' 'view' semester.pk %}">View</a></li>
+                                                        <li><a href="{% url 'semester_action' 'edit' semester.pk %}">Edit</a></li>
+                                                        <li><a href="{% url 'semester_action' 'delete' semester.pk %}">Delete</a></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    <thead>
+                                    <tr>
+                                        <th>Semester Id</th>
+                                        <th>Stream Name</th>
+                                        <th>Semester Name</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+
+                        </form>
+                    </div>
+                    <!-- /.box -->
+
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#dtTableSemester').DataTable();
+            $('.select2').select2()
+        });
+    </script>
+{% endblock %}
+
+

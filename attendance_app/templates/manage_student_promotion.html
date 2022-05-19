@@ -1,0 +1,173 @@
+{% extends "includes/base.html" %}<title>{% block title %}Student Attendance System :: Manage Student Promotion{% endblock %}</title>
+{% block content %}
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+        });
+
+        function getSemesters(stream) {
+            var stream_id = $(stream).val();
+            if (stream_id == "") {
+                $("#cmbSemesterId").html("<option value=''>Select Semester</option>");
+                $("#cmbNewSemesterId").html("<option value=''>Select Semester</option>");
+                $("#studentList").html('');
+                return false;
+            }
+            var semester_id = $("#cmbSemesterId").val();
+            $.ajax({
+                type: "POST",
+                url: "/ajax_get_semesters/",
+                data: {
+                    'stream_id': stream_id, 'semester_id': semester_id, 'csrfmiddlewaretoken': '{{ csrf_token }}'
+                }, success: function (result) {
+                    $("#cmbSemesterId").html('');
+                    $("#cmbSemesterId").html(result);
+                    $("#cmbNewSemesterId").html('');
+                    $("#cmbNewSemesterId").html(result);
+                }
+            });
+        }
+
+        function getStudents(semester) {
+            var semester_id = $(semester).val();
+            if (semester_id == "") {
+                $("#studentList").html('');
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/ajax_get_students/",
+                data: {
+                    'semester_id': semester_id, 'csrfmiddlewaretoken': '{{ csrf_token }}'
+                }, success: function (result) {
+                    if (result) {
+                        $("#studentList").html('');
+                        $("#studentList").html(result);
+                        $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                            checkboxClass: 'icheckbox_minimal-blue',
+                            radioClass: 'iradio_minimal-blue'
+                        });
+                    } else {
+                        $("#studentList").html('No Student Found!!!');
+                    }
+                }
+            });
+        }
+
+    </script>
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>Manage Student Promotion
+                <small>{# Optional description #}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li><a href="/">Manage Student Promotion</a></li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="box box-primary">
+
+                        <!-- form start -->
+                        <form class="form-vertical" method="post" role="form">
+                            {% csrf_token %}
+
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Manage Student Promotion</h3>
+
+                                <!-- <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                                    </button>
+                                </div> -->
+                            </div>
+                            <!-- /.box-header -->
+
+                            <div class="box-body">
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="StreamId">Stream Name</label> <select class="form-control select2" name="cmbStreamId" id="cmbStreamId" onchange="getSemesters(this);" style="width: 100%;" required>
+                                        <option value="">Select Stream</option>
+                                        {% for stream in all_stream %}
+                                            <option value="{{ stream.pk }}">{{ stream.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="SemesterId">Semester Name</label> <select class="form-control select2" name="cmbSemesterId" id="cmbSemesterId" onchange="getStudents(this);" style="width: 100%;" required>
+                                        <option value="">Select Semester</option>
+                                        {% for semester in all_semester %}
+                                            <option value="{{ semester.pk }}" {% if attendance.subject.semester.pk == semester.pk %} selected="selected" {% endif %}>{{ semester.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="StudentList">Student List</label><br>
+
+                                        <div id="studentList">No Student Found!!!</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="SemesterId">New Semester Name</label> <select class="form-control select2" name="cmbNewSemesterId" id="cmbNewSemesterId" style="width: 100%;" required>
+                                        <option value="">Select Semester</option>
+                                        {% for semester in all_semester %}
+                                            <option value="{{ semester.pk }}">{{ semester.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <button type="submit" class="btn btn-primary" {% if readonly == 1 %} disabled {% endif %}>Submit</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /.box-body -->
+
+                        </form>
+                    </div>
+                    <!-- /.box -->
+
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#dtTableAttendance').DataTable();
+
+            $('.select2').select2()
+
+            //Date picker
+            $('#txtDate').datepicker({
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            });
+        });
+    </script>
+{% endblock %}
+
+

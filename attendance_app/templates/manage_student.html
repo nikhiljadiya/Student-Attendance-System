@@ -1,0 +1,230 @@
+{% extends "includes/base.html" %}<title>{% block title %}Student Attendance System :: Manage Student{% endblock %}</title>
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+        function getSemesters(stream) {
+            var stream_id = $(stream).val();
+            if(stream_id == ""){
+                $("#cmbSemesterId").html("<option value=''>Select Semester</option>");
+                return false;
+            }
+            var semester_id = $("#cmbSemesterId").val();
+            $.ajax({
+                type: "POST",
+                url: "/ajax_get_semesters/",
+                data: {
+                    'stream_id': stream_id, 'semester_id': semester_id, 'csrfmiddlewaretoken': '{{ csrf_token }}'
+                }, success: function (result) {
+                    $("#cmbSemesterId").html('');
+                    $("#cmbSemesterId").html(result);
+                }
+            });
+        }
+    </script>
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>Manage Student
+                <small>{# Optional description #}</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li class="active"><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li><a href="/">Manage Student</a></li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="box box-primary">
+
+                        <!-- form start -->
+                        <form class="form-vertical" method="post" role="form">
+                            {% csrf_token %}
+
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Manage Student</h3>
+
+                                <!-- <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                                    </button>
+                                </div> -->
+                            </div>
+                            <!-- /.box-header -->
+
+                            <div class="box-body">
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="StreamId">Stream Name</label>
+                                        <select class="form-control select2" name="cmbStreamId" id="cmbStreamId" onchange="getSemesters(this);" style="width: 100%;" {% if readonly == 1 %} disabled {% endif %} required>
+                                        <option value="">Select Stream</option>
+                                        {% for stream in all_stream %}
+                                            <option value="{{ stream.pk }}" {% if student.semester.stream.pk == stream.pk %} selected="selected" {% endif %}>{{ stream.name }}</option>
+                                        {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="SemesterId">Semester Name</label>
+                                        <select class="form-control select2" name="cmbSemesterId" id="cmbSemesterId" style="width: 100%;" {% if readonly == 1 %} disabled {% endif %} required>
+                                        <option value="">Select Semester</option>
+                                        {% for semester in all_semester %}
+                                            <option value="{{ semester.pk }}" {% if student.semester.pk == semester.pk %} selected="selected" {% endif %}>{{ semester.name }}</option>
+                                        {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="SubjectName">First Name</label>
+                                        <input type="text" class="form-control" name="txtFirstName" id="txtFirstName" placeholder="First Name" value="{{ student.firstname }}" required {% if readonly == 1 %} readonly {% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="SubjectName">Middle Name</label>
+                                        <input type="text" class="form-control" name="txtMiddleName" id="txtMiddleName" placeholder="Middle Name" value="{{ student.middlename }}" required {% if readonly == 1 %} readonly {% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="SubjectName">Last Name</label>
+                                        <input type="text" class="form-control" name="txtLastName" id="txtLastName" placeholder="Last Name" value="{{ student.lastname }}" required {% if readonly == 1 %} readonly {% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="Address">Address</label>
+                                        <textarea class="form-control" rows="3" name="txtAddress" id="txtAddress" placeholder="Address" {% if readonly == 1 %} readonly {% endif %}>{{ student.address }}</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="Phone">Phone</label>
+                                        <input type="text" class="form-control" name="txtPhone" id="txtPhone" placeholder="Phone" value="{{ student.phone }}" {% if readonly == 1 %} readonly {% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="Mobile">Mobile</label>
+                                        <input type="text" class="form-control" name="txtMobile" id="txtMobile" placeholder="Mobile" value="{{ student.mobile }}" {% if readonly == 1 %} readonly {% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="EnrollmentNo">Enrollment No.</label>
+                                        <input type="text" class="form-control" name="txtEnrollmentNo" id="txtEnrollmentNo" placeholder="Enrollment No." value="{{ student.enrollment_no }}" {% if readonly == 1 %} readonly {% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="Status">Status</label><br>
+                                        <label>
+                                            <input type="radio" name="rdoStatus" id="rdoStatusActive" class="minimal" value="1" {% if student.status == True %} checked {% elif student.status == False %} {% else %} checked {% endif %} {% if readonly == 1 %} disabled {% endif %}>
+                                        </label>
+                                        <label>Active</label>
+                                        &nbsp;
+                                        <label>
+                                            <input type="radio" name="rdoStatus" id="rdoStatusInactive" class="minimal" value="0" {% if student.status == False %} checked {% endif %} {% if readonly == 1 %} disabled {% endif %}>
+                                        </label>
+                                        <label>Inactive</label>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <button type="submit" class="btn btn-primary" {% if readonly == 1 %} disabled {% endif %}>Submit</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /.box-body -->
+
+                            <div class="box-footer">
+                                <h4 class="box-title">View Student</h4><br>
+                                <table id="dtTableSemester" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Student Id</th>
+                                        <th>Stream Name</th>
+                                        <th>Semester Name</th>
+                                        <th>Student Name</th>
+                                        <th>Status</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for student in all_student %}
+                                        <tr>
+                                            <td>{{ student.pk }}</td>
+                                            <td>{{ student.semester.stream.name }}</td>
+                                            <td>{{ student.semester.name }}</td>
+                                            <td class="text-capitalize">{{ student.firstname }} {{ student.middlename }} {{ student.lastname }}</td>
+                                            <td>{% if student.status == True %} Active {% else %} Inactive {% endif %}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-xs btn-info dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="fa fa-bars"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="{% url 'student_action' 'view' student.pk %}">View</a></li>
+                                                        <li><a href="{% url 'student_action' 'edit' student.pk %}">Edit</a></li>
+                                                        <li><a href="{% url 'student_action' 'delete' student.pk %}">Delete</a></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    <thead>
+                                    <tr>
+                                        <th>Student Id</th>
+                                        <th>Stream Name</th>
+                                        <th>Semester Name</th>
+                                        <th>Student Name</th>
+                                        <th>Status</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+
+                        </form>
+                    </div>
+                    <!-- /.box -->
+
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#dtTableSemester').DataTable();
+            $('.select2').select2()
+
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            });
+        });
+    </script>
+{% endblock %}
+
+

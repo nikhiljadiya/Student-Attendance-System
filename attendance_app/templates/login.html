@@ -1,0 +1,44 @@
+{% extends "includes/base-simple.html" %}{% load static %}<title>{% block title %}Student Attendance System :: Login{% endblock %}</title>
+{% block content %}
+
+    <div class="login-box">
+
+        <div class="login-box-body">
+
+            <div class="login-logo">
+                {#<a href=""><b>Admin</b>LTE</a>#}
+                <img class="logo" src="{% static 'assets/image/logo-full.png' %}">
+            </div>
+
+            <p class="login-box-msg">Sign in to start your session</p>
+
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group has-feedback">
+                    <input type="text" class="form-control" placeholder="Username" name="username" id="username"> <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input type="password" class="form-control" placeholder="Password" name="password" id="password"> <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="row">
+                    <!-- /.col -->
+                    <div class="col-xs-4 pull-right">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+
+            <!-- <div class="text-center">
+                <br>
+
+                <p>- OR -</p>
+
+                <a href="#">Forgot password</a>
+            </div> -->
+
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+    <!-- /.login-box -->
+{% endblock %}
